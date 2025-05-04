@@ -1,19 +1,14 @@
 import puppeteer from 'puppeteer'
-import { WaitTask } from 'puppeteer'
 
-function random(min, max) {
-    return Math.random() * (max - min) + min;
+function randomDelay(min, max) {
+    let ms = Math.random() * (max - min) + min;
+    return new Promise(resolve => setTimeout(resolve, ms))
 }
-
-//delay resolve function by ms
-//await for this promise function to complete
-//TODO: delay goto each page
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const getJobPostings = async () => {
     const browser = await puppeteer.launch({
-        headless: false,
-        defaultViewport: null,
+        headless: false, //false = show browser 
+        defaultViewport: null, 
         // slowMo: 250, //slow puppeteer ops by 250ms (prefer for debuging)
     })
 
@@ -25,7 +20,7 @@ const getJobPostings = async () => {
 
     //wait for target container to load and then 2 secs after
     await page.waitForSelector('.job-contain');
-    await delay(2000, 5000)
+    await randomDelay(2000, 4000)
 
     // const jobPostings = await page.evaluate(() => {
 
@@ -41,11 +36,28 @@ const getJobPostings = async () => {
     // })
     // console.log(jobPostings)
 
-    await page.click('xpath=//a[@data-page="2"]')
-    await page.waitForNavigation()
-    // await delay(2000, 5000)
+    await Promise.all([
+        page.waitForNavigation(),
+        page.click('xpath=//a[@data-page="2"]')
+    ])
+
+    await page.waitForSelector('.pagination');
+    const isLastPage = await page.evaluate(() => {
+
+        const pageList = document.querySelector(".pagination")
+
+        const pageAnchor = pageList.querySelector(".disabled") ? true : false
+    
+        return pageAnchor
+    })
+    console.log(isLastPage)
+
+    await randomDelay(2000, 4000)
 
     await browser.close()
+
+    res.status(200).json({ isLastPage });
+    
 }
 
 getJobPostings()
