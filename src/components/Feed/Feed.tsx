@@ -4,11 +4,12 @@ import FeedItem from "../Item/FeedItem";
 import "./Feed.css"
 
 type feedTypes = {
-    keyName: string
+    keyName: string,
+    placeHolderText: string
 }
 
 function Feed(props: feedTypes) {
-    const { keyName } = props
+    const { keyName, placeHolderText } = props
 
     const [list, setList]: any = useState([])
     const [input, setInput]: any = useState("")
@@ -44,7 +45,7 @@ function Feed(props: feedTypes) {
                 type='text'
                 id='group'
                 value={input}
-                placeholder={`Input District's Name`}
+                placeholder={placeHolderText}
                 onChange={(e) => setInput(e.target.value)}
             />
 
