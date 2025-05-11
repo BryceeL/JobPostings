@@ -1,0 +1,21 @@
+.feed-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:flex-start;
+
+    width: 20%;
+    height: 50vmin;
+    
+    overflow-y: auto; 
+
+    border: solid 3px rgb(11, 0, 110);
+    border-radius: 20px;
+    
+    background-color: rgb(211, 211, 211);
+}
+
+.item-container p {
+    overflow-wrap: break-word;
+    inline-size: 150px;
+}
