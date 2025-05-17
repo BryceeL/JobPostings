@@ -11,6 +11,10 @@ const getJobPostings = async () => {
     var isLastPage = false
     var matchingJobs = []
 
+    //Assumed to be passed with GET request
+    const district = "cvusdk12"
+    const keywords = ["substitute", "Intern"]
+
     const browser = await puppeteer.launch({
         headless: false, //false = show browser 
         defaultViewport: null, 
@@ -19,7 +23,7 @@ const getJobPostings = async () => {
 
     //load page
     const page = await browser.newPage()
-    await page.goto("https://www.edjoin.org/cvusdk12?rows=10&page=1", {
+    await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
         waitUntil: "domcontentloaded",
     })
 
@@ -46,7 +50,7 @@ const getJobPostings = async () => {
         } else {
             isLastPage = false
         }
-        console.log(`Is last page: ${isLastPage}`)
+        //console.log(`Is last page: ${isLastPage}`)
 
         //Scrape job titles and respective links
         await page.waitForSelector('.job-contain');
@@ -60,12 +64,18 @@ const getJobPostings = async () => {
                 return {jobTitle, jobLink}
             })
         })
-        //console.log(jobPostings)
 
-        //TODO: Iterate job postings and push entries with titles that match a keyword
-        matchingJobs.push(jobPostings)
-
-
+        //Iterate job postings and push entries with titles that match a keyword
+        jobPostings.forEach((jobPosting) => {
+            keywords.forEach((caseKeyword) => {
+                const jobTitle = jobPosting.jobTitle.toLowerCase()
+                const keyword = caseKeyword.toLowerCase()
+                if (jobTitle.indexOf(keyword) !== -1 && !matchingJobs.includes(jobPosting)) {
+                    console.log(jobTitle)
+                    matchingJobs.push(jobPosting)
+                }
+            })
+        })
         console.log(`Scraped page ${pageCount}`)
 
         await randomDelay(2000, 4000)
@@ -79,7 +89,6 @@ const getJobPostings = async () => {
             ])
         }
     } while (isLastPage == false)
-    //isLastPage == false
     await browser.close()
 
     console.log(matchingJobs)
