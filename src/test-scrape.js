@@ -7,6 +7,10 @@ function randomDelay(min, max) {
 }
 
 const getJobPostings = async () => {
+    var pageCount = 1
+    var isLastPage = false
+    var matchingJobs = []
+
     const browser = await puppeteer.launch({
         headless: false, //false = show browser 
         defaultViewport: null, 
@@ -19,47 +23,66 @@ const getJobPostings = async () => {
         waitUntil: "domcontentloaded",
     })
 
-    /*SCRAPING FUNCTIONS*/
-    //wait for target container to load and then 2 secs after
-    await page.waitForSelector('.job-contain');
-    await randomDelay(2000, 4000)
+    do {
+        await page.waitForSelector('.pagination');
+        await randomDelay(3000, 6000)
+        //returns the class list of all the page buttons
+        const pageClasses = await page.evaluate(() => {
+            const pageList = document.querySelector(".pagination")
+            const pageButtons = pageList.querySelectorAll("li")
 
-    const jobPostings = await page.evaluate(() => {
-
-        const jobContainerList = document.querySelectorAll(".job-contain")
-
-        return Array.from(jobContainerList).map((jobPosting) => {
-
-            const jobTitle = jobPosting.querySelector(".card-job-title").innerText
-            const jobLink = jobPosting.querySelector("a").href
-    
-            return {jobTitle, jobLink}
+            return Array.from(pageButtons).map((pageButton) => {
+                const text = pageButton.querySelector("a").innerText
+                const classList = pageButton.classList
+                if (text == '>') {
+                    return {classList}
+                }
+            })
         })
-    })
-    console.log(jobPostings)
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click('xpath=//a[@data-page="2"]')
-    ])
+        //determine if is last page based on if '>' button is disabled
+        if (pageClasses.length > 0 && pageClasses[pageClasses.length-1].classList[0] == 'disabled') {
+            isLastPage = true
+        } else {
+            isLastPage = false
+        }
+        console.log(`Is last page: ${isLastPage}`)
 
-    await page.waitForSelector('.pagination');
-    const isLastPage = await page.evaluate(() => {
+        //Scrape job titles and respective links
+        await page.waitForSelector('.job-contain');
+        const jobPostings = await page.evaluate(() => {
+            const jobContainerList = document.querySelectorAll(".job-contain")
 
-        const pageList = document.querySelector(".pagination")
+            return Array.from(jobContainerList).map((jobPosting) => {
+                const jobTitle = jobPosting.querySelector(".card-job-title").innerText
+                const jobLink = jobPosting.querySelector("a").href
+        
+                return {jobTitle, jobLink}
+            })
+        })
+        //console.log(jobPostings)
 
-        const pageAnchor = pageList.querySelector(".disabled") ? true : false
-    
-        return pageAnchor
-    })
-    console.log(isLastPage)
+        //TODO: Iterate job postings and push entries with titles that match a keyword
+        matchingJobs.push(jobPostings)
 
-    await randomDelay(2000, 4000)
 
+        console.log(`Scraped page ${pageCount}`)
+
+        await randomDelay(2000, 4000)
+
+        //Navigate to next page if not the last one
+        if(isLastPage == false) {
+            pageCount++
+            await Promise.all([
+                        page.waitForNavigation(),
+                        page.click(`xpath=//a[@data-page="${pageCount}"]`)
+            ])
+        }
+    } while (isLastPage == false)
+    //isLastPage == false
     await browser.close()
 
-    res.status(200).json({ isLastPage });
-    
+    console.log(matchingJobs)
 }
 
 getJobPostings()
