@@ -8,46 +8,50 @@ function randomDelay(min, max) {
 }
 
 router.get('/scrape_jobs', async (request, response) => {
-    const KeyData  = request.query.keydata
-    console.log('Received', KeyData)
+    const district  = request.query.district
+    const rawKeywords = request.query.keywords
+    const keywords = rawKeywords ? rawKeywords.split(',') : []
 
-    // try {
-    //     console.log("scraping job posts...")
-    //     const browser = await puppeteer.launch({
-    //         headless: true, //false = show browser 
-    //         defaultViewport: null, 
-    //     })
+    console.log('Received', district)
+    console.log('Received', keywords)
+    
+    try {
+        console.log("scraping job posts...")
+        const browser = await puppeteer.launch({
+            headless: true, //false = show browser 
+            defaultViewport: null, 
+        })
 
-    //     //load page
-    //     const page = await browser.newPage()
-    //     await page.goto("https://www.edjoin.org/cvusdk12?rows=10&page=1", {
-    //         waitUntil: "domcontentloaded",
-    //     })
+        //load page
+        const page = await browser.newPage()
+        await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
+            waitUntil: "domcontentloaded",
+        })
 
-    //     //wait for target container to load and then 2 secs after
-    //     await page.waitForSelector('.job-contain');
-    //     await randomDelay(2000, 5000)
+        //wait for target container to load and then 2 secs after
+        await page.waitForSelector('.job-contain');
+        await randomDelay(2000, 5000)
 
-    //     const jobPostings = await page.evaluate(() => {
-    //         const jobContainerList = document.querySelectorAll(".job-contain")
+        const jobPostings = await page.evaluate(() => {
+            const jobContainerList = document.querySelectorAll(".job-contain")
 
-    //         return Array.from(jobContainerList).map((jobPosting) => {
-    //             const jobTitle = jobPosting.querySelector(".card-job-title").innerText
-    //             const jobLink = jobPosting.querySelector("a").href
+            return Array.from(jobContainerList).map((jobPosting) => {
+                const jobTitle = jobPosting.querySelector(".card-job-title").innerText
+                const jobLink = jobPosting.querySelector("a").href
 
-    //             return {jobTitle, jobLink}
-    //         })
-    //     })
-    //     // console.log(jobPostings)
+                return {jobTitle, jobLink}
+            })
+        })
+        // console.log(jobPostings)
 
-    //     await browser.close();
-    //     response.status(200).json({ jobPostings });
-    //     console.log("Successfully scraped posts!")
+        await browser.close();
+        response.status(200).json({ jobPostings });
+        console.log("Successfully scraped posts!")
         
-    // } catch (error) {
-    //     console.error(error);
-    //     response.status(500).json({ error: 'Scraping failed' });
-    // }
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ error: 'Scraping failed' });
+    }
 });
 
 module.exports = router;
