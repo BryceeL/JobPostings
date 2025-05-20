@@ -12,12 +12,13 @@ router.get('/scrape_jobs', async (request, response) => {
     const rawKeywords = request.query.keywords
     const keywords = rawKeywords ? rawKeywords.split(',') : []
 
-    var pageCount = 1
-    var isLastPage = false
-    var matchingJobs = []
+    let pageCount = 1
+    let isLastPage = false
+    let invalidDistrict = false
+    let matchingJobs = []
 
     try {
-        console.log(`Scraping from '${district}'`)
+        console.log(`Scraping '${district}'`)
         const browser = await puppeteer.launch({
             headless: true, //false = show browser 
             defaultViewport: null, 
@@ -29,19 +30,34 @@ router.get('/scrape_jobs', async (request, response) => {
             waitUntil: "domcontentloaded",
         })
         do {
+            await randomDelay(2000, 4000)
+            await page.waitForSelector('body');
+            //checks if page does not have application error
+            const validPage = await page.evaluate(() => {
+                const headingText = document.querySelector("h1").innerText
+                if (headingText.indexOf("Server Error") !== -1) {
+                    return false
+                } else {
+                    return true
+                }
+            })
+
+            if(!validPage) {
+                console.log(`'${district}' is not valid; stop scraping`)
+                invalidDistrict = true
+                break
+            }
+
             await page.waitForSelector('.pagination');
-            await randomDelay(3000, 6000)
+            await randomDelay(1000, 5000)
             //returns the class list of all the page buttons
             const pageClasses = await page.evaluate(() => {
                 const pageList = document.querySelector(".pagination")
                 const pageButtons = pageList.querySelectorAll("li")
 
                 return Array.from(pageButtons).map((pageButton) => {
-                    const text = pageButton.querySelector("a").innerText
                     const classList = pageButton.classList
-                    if (text == '>') {
-                        return {classList}
-                    }
+                    return {classList}
                 })
             })
 
@@ -53,15 +69,19 @@ router.get('/scrape_jobs', async (request, response) => {
             }
 
             //Scrape job titles and respective links
-            await page.waitForSelector('.job-contain');
+            await page.waitForSelector('.job-contain')
+            await page.waitForSelector('.bioBox')
             const jobPostings = await page.evaluate(() => {
                 const jobContainerList = document.querySelectorAll(".job-contain")
+                const bioBox = document.querySelector(".bioBox")
 
                 return Array.from(jobContainerList).map((jobPosting) => {
                     const jobTitle = jobPosting.querySelector(".card-job-title").innerText
                     const jobLink = jobPosting.querySelector("a").href
             
-                    return {jobTitle, jobLink}
+                     const districtTitle = bioBox.querySelector("h1").innerText
+
+                    return {jobTitle, jobLink, districtTitle}
                 })
             })
 
@@ -75,9 +95,9 @@ router.get('/scrape_jobs', async (request, response) => {
                     }
                 })
             })
-            console.log(`Scraped page ${pageCount}`)
+            console.log(`Scraped page ${pageCount} of '${district}'`)
 
-            await randomDelay(2000, 4000)
+            await randomDelay(1000, 5000)
 
             //Navigate to next page if not the last one
             if(isLastPage == false) {
@@ -89,13 +109,16 @@ router.get('/scrape_jobs', async (request, response) => {
             }
         } while (isLastPage == false)
 
-        await browser.close();
-        response.status(200).json({ matchingJobs });
-        console.log(`Successfully scraped from '${district}'`)
+        await browser.close()
+        response.status(200).json({ matchingJobs, invalidDistrict })
+
+        if (!invalidDistrict) {
+            console.log(`Successfully scraped '${district}'`)
+        }
         
     } catch (error) {
         console.error(error);
-        response.status(500).json({ error: 'Scraping failed' });
+        response.status(500).json({ error: 'Scraping failed' })
     }
 });
 

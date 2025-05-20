@@ -11,6 +11,7 @@ const getJobPostings = async () => {
     var isLastPage = false
     var matchingJobs = []
 
+    //TODO: Handle nonexisting district
     //Assumed to be passed with GET request
     const district = "cvusdk12"
     const keywords = ["substitute", "Intern"]
@@ -28,6 +29,26 @@ const getJobPostings = async () => {
     })
 
     do {
+        
+        await page.waitForSelector('body');
+        await randomDelay(1000, 1000)
+        //checks if page does not have application error
+        const validPage = await page.evaluate(() => {
+            const headingText = document.querySelector("h1").innerText
+            if (headingText.indexOf("Server Error") !== -1) {
+                return false
+            } else {
+                return true
+            }
+        })
+
+        console.log(`Is valid page: ${validPage}`)
+
+        if(!validPage) {
+            console.log("Not valid page; stop scraping")
+            break
+        }
+
         await page.waitForSelector('.pagination');
         await randomDelay(3000, 6000)
         //returns the class list of all the page buttons
@@ -36,11 +57,8 @@ const getJobPostings = async () => {
             const pageButtons = pageList.querySelectorAll("li")
 
             return Array.from(pageButtons).map((pageButton) => {
-                const text = pageButton.querySelector("a").innerText
                 const classList = pageButton.classList
-                if (text == '>') {
-                    return {classList}
-                }
+                 return {classList}
             })
         })
 
@@ -50,18 +68,21 @@ const getJobPostings = async () => {
         } else {
             isLastPage = false
         }
-        //console.log(`Is last page: ${isLastPage}`)
+        console.log(`Is last page: ${isLastPage}`)
 
         //Scrape job titles and respective links
         await page.waitForSelector('.job-contain');
         const jobPostings = await page.evaluate(() => {
             const jobContainerList = document.querySelectorAll(".job-contain")
+            const bioBox = document.querySelector(".bioBox")
 
             return Array.from(jobContainerList).map((jobPosting) => {
                 const jobTitle = jobPosting.querySelector(".card-job-title").innerText
                 const jobLink = jobPosting.querySelector("a").href
+
+                const districtTitle = bioBox.querySelector("h1").innerText
         
-                return {jobTitle, jobLink}
+                return {jobTitle, jobLink, districtTitle}
             })
         })
 
@@ -71,7 +92,7 @@ const getJobPostings = async () => {
                 const jobTitle = jobPosting.jobTitle.toLowerCase()
                 const keyword = caseKeyword.toLowerCase()
                 if (jobTitle.indexOf(keyword) !== -1 && !matchingJobs.includes(jobPosting)) {
-                    console.log(jobTitle)
+                    // console.log(jobTitle)
                     matchingJobs.push(jobPosting)
                 }
             })
