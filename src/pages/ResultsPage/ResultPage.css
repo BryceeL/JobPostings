@@ -1,0 +1,17 @@
+.scraped-jobs-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.scraped-jobs-container a {
+    /* border: solid 3px rgb(210, 210, 210);
+    border-radius: 10px; */
+
+    text-align: center;
+    
+    padding: 5px;
+}
