@@ -25,9 +25,16 @@ function Feed(props: feedTypes) {
 
     //update list to localstorage and clear input box
     function addToList() {
-        setList([...list, input])
-        localStorage.setItem(keyName, JSON.stringify([...list, input]))
-        setInput("")
+        if(input.trim() == "") {
+            alert("Input field cannot be empty.")
+        } else if(list.includes(input)) {
+            alert("This is a duplicate entry.")
+        } else {
+            setList([...list, input])
+            localStorage.setItem(keyName, JSON.stringify([...list, input]))
+            setInput("")
+        }
+        
     }
 
     //return items from the list except 'deleteItem'
