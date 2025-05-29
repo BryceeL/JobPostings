@@ -1,15 +1,33 @@
+.feed {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:center;
+
+    gap: 10px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items:flex-start;
+
+    width: 120%;
+}
+
 .feed-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items:flex-start;
 
-    height: 50vmin;
-    
     overflow-y: auto; 
 
-    border: solid 3px rgb(11, 0, 110);
-    border-radius: 20px;
+    height: 50vh;
+    width: 120%;
+
+    border: solid 3px rgb(0, 0, 0);
     
     background-color: rgb(211, 211, 211);
 }
