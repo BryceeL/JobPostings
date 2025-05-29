@@ -109,7 +109,7 @@ function ResultPage() {
 
             <p>{jobPostings.length == 0 && finished ? 'No matching job posts found.': ""}</p>
             
-            <div className='scraped-jobs-container'>
+            <div className='scraped-jobs'>
                 { jobPostings.length > 0 ? (jobPostings.map((jobPosting : JobType) => (
                          <a href={jobPosting.jobLink}>{`${jobPosting.jobTitle} (${jobPosting.districtTitle})`}</a>
                     ))) : ""}
@@ -121,11 +121,14 @@ function ResultPage() {
             )}
             
             
-            {failedScrapes.length > 0 && (
-                (failedScrapes.map((failedDistrict: string) => (
-                    <p>Failed: {failedDistrict}</p>
-                )))
-            )}
+            <div className='failed-notifs'>
+                {failedScrapes.length > 0 && (
+                    (failedScrapes.map((failedDistrict: string) => (
+                        <div>Failed: {failedDistrict}</div>
+                    )))
+                )}
+            </div>
+            
         </div>
     )
 }
