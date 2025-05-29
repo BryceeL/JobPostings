@@ -7,17 +7,21 @@ import "./InputPage.css"
 function InputPage() {
     const navigate = useNavigate();
     return (
-        <div className='input-page'>            
-            <Feed
-                keyName={"districts"}
-                placeHolderText={`Input a district's Name`}
-            ></Feed>
-
-            <Feed
-                keyName={"keywords"}
-                placeHolderText={`Input a keyword`}
-            ></Feed>
-            <button onClick={() => navigate("/results")}>Results</button>
+        <div className='input-page'>  
+            <div className="feeds">
+                <Feed
+                    keyName={"districts"}
+                    placeHolderText={`Input a district's name`}
+                ></Feed>
+                <Feed
+                    keyName={"keywords"}
+                    placeHolderText={`Input a keyword`}
+                ></Feed>
+            </div> 
+            <div>
+                <button className='result-button' onClick={() => navigate("/results")}>Results</button>
+            </div>         
+           
         </div>
     )
 }
