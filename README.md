@@ -1,54 +1,34 @@
-# React + TypeScript + Vite
+# Edjoin Job Posting Scraper
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The purpose of this web application is to scrape links of job posts from certain school districts based on a list of keywords.
 
-Currently, two official plugins are available:
+## How to run the web application
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Have one terminal run under the directory of root project and type:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+yarn dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Have another terminal run under the backend directory and type:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
 ```
+node server.js
+```
+
+## How to use the web application
+
+- Extract the subdirectory name of the district from the respective URL:
+
+https://www.edjoin.org/**oakdistrict**
+
+- Add this name to the list of district names
+
+- Add keywords to the list scrape job titles that have the word
+- Eg: 'Teacher', 'Technican', 'High School'
+
+- Click 'Scrape Jobs Posts' to start scraping
+- Give it sometime to return a list of links to matching job postings
+  - Refresh your browser if it displays an error
+  - You can download a text file with the links
+
