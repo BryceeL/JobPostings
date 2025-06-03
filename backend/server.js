@@ -8,7 +8,6 @@ app.use(cors())
 
 const port = 3001
 
-//node server.js to run this server backend locally
 app.use('/api', routes)
 
 app.listen(port, () => {
