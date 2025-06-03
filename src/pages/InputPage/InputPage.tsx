@@ -19,7 +19,7 @@ function InputPage() {
                 ></Feed>
             </div> 
             <div>
-                <button className='result-button' onClick={() => navigate("/results")}>Results</button>
+                <button className='result-button' onClick={() => navigate("/results")}>Scrape Jobs Posts</button>
             </div>         
            
         </div>
