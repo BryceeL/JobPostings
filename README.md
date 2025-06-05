@@ -29,7 +29,7 @@ node server.js
 
 - Click 'Scrape Jobs Posts' to start scraping
 
-<img src="public/listpage.png" alt="Page to add district names and keywords for scraping">
+
 
 - Give it some time to return a list of links to matching job postings
   - Refresh your browser if it displays an error
