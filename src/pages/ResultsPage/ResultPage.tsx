@@ -39,11 +39,22 @@ function ResultPage() {
     const navigate = useNavigate();
     const calledRef = useRef(false);
 
-    const blob = new Blob([blobJobs], {type: 'text/plain'})
-    const url = URL.createObjectURL(blob)
+    
 
     function formatTime(number: number) {
         return number < 10 ? '0' + number : number;
+    }
+
+    function downloadJobPostings() {
+        const blob = new Blob([blobJobs], {type: 'text/plain'})
+        const url = URL.createObjectURL(blob)
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Jobs ${currentTime}.txt`;
+        a.click();
+
+        URL.revokeObjectURL(url);
     }
     
     useEffect(() => {
@@ -103,10 +114,17 @@ function ResultPage() {
     }, [jobPostings])
 
     return (
-        <div>
-            <p>Districts processed: {scrapeAmount}/{districtsList.length}</p>
-            <button onClick={() => navigate("/")}>Back</button>
+        <div className='result-page'>
+            <p>Districts scraped: {scrapeAmount}/{districtsList.length}</p>
 
+            <div className='button-container'>
+                <button onClick={() => navigate("/")}>Back</button>
+
+                {jobPostings.length > 0 && (
+                    <button onClick={downloadJobPostings}>Download Job Postings</button>
+                )}
+            </div>
+            
             <p>{jobPostings.length == 0 && finished ? 'No matching job posts found.': ""}</p>
             
             <div className='scraped-jobs'>
@@ -114,12 +132,6 @@ function ResultPage() {
                          <a href={jobPosting.jobLink}>{`${jobPosting.jobTitle} (${jobPosting.districtTitle})`}</a>
                     ))) : ""}
             </div>
-           
-
-            {jobPostings.length > 0 && (
-                 <a href={url} download={`Jobs ${currentTime}.txt`}>Download Job Postings</a>
-            )}
-            
             
             <div className='failed-notifs'>
                 {failedScrapes.length > 0 && (
