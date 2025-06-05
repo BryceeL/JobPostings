@@ -1951,10 +1951,10 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-tar-fs@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.npmjs.org/tar-fs/-/tar-fs-3.0.8.tgz"
-  integrity sha512-ZoROL70jptorGAlgAYiLoBLItEKw/fUxg9BSYK/dF/GAGYFJOJJJMvjPAKDJraCXFwadD456FCuvLWgfhMsPwg==
+tar-fs@^3.0.8, tar-fs@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.npmjs.org/tar-fs/-/tar-fs-3.0.9.tgz"
+  integrity sha512-XF4w9Xp+ZQgifKakjZYmFdkLoSWd34VGKcsTCwlNWM7QG3ZbaxnTsaBwnjFZqHRf/rROxaR8rXnbtwdvaDI+lA==
   dependencies:
     pump "^3.0.0"
     tar-stream "^3.1.5"
