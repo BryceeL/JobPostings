@@ -29,7 +29,7 @@ router.get('/scrape_jobs', async (request, response) => {
         await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
             waitUntil: "domcontentloaded",
         })
-        console.log("page loaded")
+        console.log(`${district} page loaded`)
         do {
             await randomDelay(2000, 4000)
             await page.waitForSelector('body');
@@ -48,7 +48,7 @@ router.get('/scrape_jobs', async (request, response) => {
                 invalidDistrict = true
                 break
             }
-             console.log("valid page")
+             console.log(`${district} is valid page`)
 
             await page.waitForSelector('.pagination');
             await randomDelay(1000, 5000)
