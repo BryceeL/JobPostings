@@ -31,8 +31,3 @@
     
     background-color: rgb(211, 211, 211);
 }
-
-.item-container p {
-    overflow-wrap: break-word;
-    inline-size: 150px;
-}
