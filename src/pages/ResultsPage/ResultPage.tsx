@@ -20,6 +20,9 @@ function ResultPage() {
     const [completedScrapes, setCompletedScrapes] = useState<string[]>([])
 
     const [currentTime, setCurrentTime] = useState<String>("")
+
+    let scrapeCount = 0
+
     let now = new Date()
     let hours = now.getHours()
     let minutes = now.getMinutes()
@@ -41,8 +44,6 @@ function ResultPage() {
     const navigate = useNavigate();
     const calledRef = useRef(false);
 
-    
-
     function formatTime(number: number) {
         return number < 10 ? '0' + number : number;
     }
@@ -58,6 +59,17 @@ function ResultPage() {
 
         URL.revokeObjectURL(url);
     }
+
+    function incrementScrapeAmount() {
+        setScrapeAmount(scrapeAmount => scrapeAmount + 1)
+        scrapeCount += 1
+        //Finished iterating district lists
+        if (scrapeCount == districtsList.length) {
+            console.log("finished")
+            setFinished(true)
+        }
+    }
+
     
     useEffect(() => {
         if (calledRef.current) return;
@@ -72,8 +84,7 @@ function ResultPage() {
 
         setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
 
-        districtsList.forEach((district: string, i: number) => {
-            // setScrapeTarget(district)
+        districtsList.forEach((district: string) => {
             fetch(`http://localhost:3001/api/scrape_jobs?district=${encodeURIComponent(district)}&keywords=${encodeURIComponent(keywordsList.join(','))}`)
                 .then(res => {
                     if (!res.ok) {
@@ -89,16 +100,14 @@ function ResultPage() {
                     } else {
                         const jobs = data.matchingJobs
                         setJobPostings(jobPostings => [...jobPostings, ...jobs])
+                        setCompletedScrapes(completedScrapes => [...completedScrapes, district])
                     }
-                    setScrapeAmount(scrapeAmount => scrapeAmount + 1)
-                    setCompletedScrapes(completedScrapes => [...completedScrapes, district])
-                    //Finished iterating district lists
-                    if (i+1 == districtsList.length) {
-                        setFinished(true)
-                    }
+                    incrementScrapeAmount()
                 } )
                 .catch(err => {
                     setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Scraping Error)`])
+                    incrementScrapeAmount()
+
                     console.error(`Fetch error for '${district}'`, err)
                     console.log("error")
                 })
