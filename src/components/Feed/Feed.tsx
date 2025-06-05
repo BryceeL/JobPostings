@@ -48,23 +48,28 @@ function Feed(props: feedTypes) {
 
     return (
         <div className='feed'>
-            <input
-                type='text'
-                id='group'
-                value={input}
-                placeholder={placeHolderText}
-                onChange={(e) => setInput(e.target.value)}
-            />
+            <div className='button-container'>
+                <input
+                    type='text'
+                    id='group'
+                    value={input}
+                    placeholder={placeHolderText}
+                    onChange={(e) => setInput(e.target.value)}
+                />
 
-            <button onClick={() => addToList()}>Add</button>
-
+                <button onClick={() => addToList()}>Add</button>
+            </div>
+            
             <div className="feed-container">
-                {list.map((item: any) => (
-                    <FeedItem
-                        item={item}
-                        deleteFunction={deleteFromList}
-                    ></FeedItem>
-                ))}
+                <div className='scroll'>
+                    {list.map((item: any) => (
+                        <FeedItem
+                            item={item}
+                            deleteFunction={deleteFromList}
+                        ></FeedItem>
+                    ))}
+                </div>
+                
             </div>
         </div>
 

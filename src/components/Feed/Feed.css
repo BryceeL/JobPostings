@@ -7,27 +7,34 @@
     gap: 10px;
 }
 
-.input-container {
+.feed .button-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    align-items:flex-start;
 
-    width: 120%;
+    gap: 10px;
 }
 
-.feed-container {
+.feed .feed-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items:flex-start;
 
-    overflow-y: auto; 
+    overflow: hidden;
 
-    height: 50vh;
     width: 120%;
 
     border: solid 3px rgb(0, 0, 0);
+    border-radius: 10px;
     
     background-color: rgb(211, 211, 211);
+}
+
+.feed .feed-container .scroll {
+    overflow-x: hidden;
+    overflow-y: auto; 
+
+    height: 50vh;
+    width: 100%;
+
 }
