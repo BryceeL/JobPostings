@@ -15,7 +15,9 @@ function ResultPage() {
     const [scrapeAmount, setScrapeAmount] = useState<number>(0)
 
     const [finished, setFinished] = useState<boolean>(false)
+
     const [failedScrapes, setFailedScrapes] = useState<string[]>([])
+    const [completedScrapes, setCompletedScrapes] = useState<string[]>([])
 
     const [currentTime, setCurrentTime] = useState<String>("")
     let now = new Date()
@@ -88,7 +90,8 @@ function ResultPage() {
                         const jobs = data.matchingJobs
                         setJobPostings(jobPostings => [...jobPostings, ...jobs])
                     }
-                     setScrapeAmount(scrapeAmount => scrapeAmount + 1)
+                    setScrapeAmount(scrapeAmount => scrapeAmount + 1)
+                    setCompletedScrapes(completedScrapes => [...completedScrapes, district])
                     //Finished iterating district lists
                     if (i+1 == districtsList.length) {
                         setFinished(true)
@@ -133,10 +136,18 @@ function ResultPage() {
                     ))) : ""}
             </div>
             
-            <div className='failed-notifs'>
+            <div className='notifs failed'>
                 {failedScrapes.length > 0 && (
                     (failedScrapes.map((failedDistrict: string) => (
                         <div>Failed: {failedDistrict}</div>
+                    )))
+                )}
+            </div>
+
+            <div className='notifs completed'>
+                {completedScrapes.length > 0 && (
+                    (completedScrapes.map((completedScrape: string) => (
+                        <div>Completed: {completedScrape}</div>
                     )))
                 )}
             </div>
