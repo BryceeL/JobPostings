@@ -13,7 +13,7 @@ yarn dev
 Have another terminal run under the backend directory and type:
 
 ```
-node server.js
+node server.js 
 ```
 
 ## How to use the Web Scraper
