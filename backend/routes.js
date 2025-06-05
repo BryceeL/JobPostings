@@ -29,7 +29,7 @@ router.get('/scrape_jobs', async (request, response) => {
         await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
             waitUntil: "domcontentloaded",
         })
-        console.log(`${district} page loaded`)
+        console.log(`'${district}' page loaded`)
         do {
             await randomDelay(2000, 4000)
             await page.waitForSelector('body');
@@ -48,7 +48,7 @@ router.get('/scrape_jobs', async (request, response) => {
                 invalidDistrict = true
                 break
             }
-             console.log(`${district} is valid page`)
+             console.log(`'${district}' is valid page`)
 
             await page.waitForSelector('.pagination');
             await randomDelay(1000, 5000)
@@ -63,8 +63,8 @@ router.get('/scrape_jobs', async (request, response) => {
                 })
             })
 
-            //determine if is last page based on if '>' button is disabled
-            if (pageClasses.length > 0 && pageClasses[pageClasses.length-1].classList[0] == 'disabled') {
+            //determine if last page if there is no navigation button or the '>' button is disabled
+            if (pageClasses.length == 0 || pageClasses[pageClasses.length-1].classList[0] == 'disabled') {
                 isLastPage = true
             } else {
                 isLastPage = false
