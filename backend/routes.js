@@ -29,9 +29,9 @@ router.get('/scrape_jobs', async (request, response) => {
         await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
             waitUntil: "domcontentloaded",
         })
-        console.log(`'${district}' page loaded`)
+        console.log(`'${district}' page ${pageCount} loaded`)
         do {
-            await randomDelay(2000, 4000)
+            await randomDelay(1000, 5000)
             await page.waitForSelector('body');
             //checks if page does not have application error
             const validPage = await page.evaluate(() => {
@@ -44,14 +44,14 @@ router.get('/scrape_jobs', async (request, response) => {
             })
 
             if(!validPage) {
-                console.log(`'${district}' is not valid; stop scraping`)
+                console.log(`'${district}' page ${pageCount} returned server error; stop scraping`)
                 invalidDistrict = true
                 break
             }
-             console.log(`'${district}' is valid page`)
+             console.log(`'${district}' page ${pageCount} is valid`)
 
             await page.waitForSelector('.pagination');
-            await randomDelay(1000, 5000)
+            await randomDelay(1000, 8000)
             //returns the class list of all the page buttons
             const pageClasses = await page.evaluate(() => {
                 const pageList = document.querySelector(".pagination")
@@ -99,7 +99,7 @@ router.get('/scrape_jobs', async (request, response) => {
             })
             console.log(`Scraped page ${pageCount} of '${district}'`)
 
-            await randomDelay(1000, 5000)
+            await randomDelay(1000, 8000)
 
             //Navigate to next page if not the last one
             if(isLastPage == false) {
@@ -115,7 +115,7 @@ router.get('/scrape_jobs', async (request, response) => {
         response.status(200).json({ matchingJobs, invalidDistrict })
 
         if (!invalidDistrict) {
-            console.log(`Successfully scraped '${district}'`)
+            console.log(`Successfully scraped page ${pageCount} of '${district}'`)
         }
         
     } catch (error) {
