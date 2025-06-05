@@ -18,9 +18,9 @@ node server.js
 
 ## How to use the Web Scraper
 
-- Extract the subdirectory name of the district from the respective URL:
+- Extract the subdomain name of the district from the respective URL:
 
-<img src="public/subdomain.png" alt="Find district name as the url subdomain">
+<img src="public/subdomain.png" alt="Find district name as the URL subdomain">
 
 - Add this name to the list of district names
 
@@ -31,7 +31,7 @@ node server.js
 
 <img src="public/listpage.png" alt="Page to add district names and keywords for scraping">
 
-- Give it sometime to return a list of links to matching job postings
+- Give it some time to return a list of links to matching job postings
   - Refresh your browser if it displays an error
   - You can download a text file with the links
 
