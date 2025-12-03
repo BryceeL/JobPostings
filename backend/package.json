@@ -9,7 +9,6 @@
     "puppeteer": "^24.8.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "puppeteer install"
+    "start": "node server.js"
   }
 }
