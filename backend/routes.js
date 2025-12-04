@@ -22,7 +22,6 @@ router.get('/scrape_jobs', async (request, response) => {
         const browser = await puppeteer.launch({
             headless: true, //false = show browser 
             defaultViewport: null, 
-            args: ["--no-sandbox", "--disable-setuid-sandbox"] //to run chromium for puppeteer
         })
 
         //load page
