@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from "@/config";
 
 import "./ResultPage.css"
 
@@ -10,7 +9,7 @@ type JobType = {
     districtTitle: string
 }
 
-const api_url = import.meta.env._API_URL
+const api = import.meta.env.API_URL
 
 function ResultPage() {
     const [jobPostings, setJobPostings] = useState<JobType[]>([])
@@ -88,7 +87,7 @@ function ResultPage() {
         setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
 
         districtsList.forEach((district: string) => {
-            fetch(`${api_url}/api/scrape_jobs?district=${encodeURIComponent(district)}&keywords=${encodeURIComponent(keywordsList.join(','))}`)
+            fetch(`${api}/api/scrape_jobs?district=${encodeURIComponent(district)}&keywords=${encodeURIComponent(keywordsList.join(','))}`)
                 .then(res => {
                     if (!res.ok) {
                         throw new Error('Failed to fetch');
