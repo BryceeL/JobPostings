@@ -10,6 +10,6 @@
   },
   "scripts": {
     "start": "node server.js",
-    "postinstall": "puppeteer install"
+    "postinstall": "npx puppeteer install"
   }
 }
