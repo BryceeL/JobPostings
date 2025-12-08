@@ -20,6 +20,7 @@ function InputPage() {
             </div> 
             <div>
                 <button className='result-button' onClick={() => navigate("/results")}>Scrape Jobs Posts</button>
+                <p>Online</p>
             </div>         
            
         </div>
