@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@sparticuz/chrome-aws-lambda": "^17.1.3",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "puppeteer": "^24.8.0",
-    "puppeteer-core": "^24.31.0"
+    "puppeteer-core": "^24.32.1"
   },
   "scripts": {
     "start": "node server.js"

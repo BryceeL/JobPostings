@@ -1,4 +1,6 @@
-const puppeteer = require('puppeteer')
+import puppeteer from "puppeteer-core"
+import chromium from "@sparticuz/chrome-aws-lambda"
+
 const express = require('express')
 const router = express.Router()
 
@@ -20,9 +22,10 @@ router.get('/scrape_jobs', async (request, response) => {
     try {
         console.log(`Scraping '${district}'`)
         const browser = await puppeteer.launch({
-            headless: true, //false = show browser 
-            defaultViewport: null, 
-            args: ["--no-sandbox", "--disable-setuid-sandbox"] //to run chromium for puppeteer
+            args: chromium.args,
+            headless: chromium.headless,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath,
         })
 
         //load page
