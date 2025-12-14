@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-core"
 import chromium from "@sparticuz/chrome-aws-lambda"
+import express from "express"
 
-const express = require('express')
 const router = express.Router()
 
 function randomDelay(min, max) {
