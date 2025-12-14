@@ -128,4 +128,4 @@ router.get('/scrape_jobs', async (request, response) => {
     }
 });
 
-module.exports = router;
+export default router

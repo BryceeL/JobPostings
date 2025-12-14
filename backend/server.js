@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors"
 
-const routes = require('./routes')
+import routes from "./routes.js"
 
 process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || "/tmp/puppeteer";
 
