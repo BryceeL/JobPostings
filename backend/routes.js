@@ -1,6 +1,6 @@
+import express from "express"
 import puppeteer from "puppeteer-core"
 import chromium from "@sparticuz/chrome-aws-lambda"
-import express from "express"
 
 const router = express.Router()
 
@@ -20,13 +20,16 @@ router.get('/scrape_jobs', async (request, response) => {
     let matchingJobs = []
 
     try {
+         const path = await chromium.executablePath;
+        console.log("Chromium path:", path);
+
         console.log(`Scraping '${district}'`)
         const browser = await puppeteer.launch({
             args: chromium.args,
-            headless: chromium.headless,
             defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath,
-        })
+            executablePath,
+            headless: chromium.headless,
+        });
 
         //load page
         const page = await browser.newPage()
