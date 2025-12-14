@@ -20,8 +20,8 @@ router.get('/scrape_jobs', async (request, response) => {
     let matchingJobs = []
 
     try {
-         const path = await chromium.executablePath;
-        console.log("Chromium path:", path);
+        const executablePath = await chromium.executablePath
+        console.log("Chromium path:", executablePath)
 
         console.log(`Scraping '${district}'`)
         const browser = await puppeteer.launch({
