@@ -16,6 +16,11 @@
   dependencies:
     "@types/node" "*"
 
+"19@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.npmjs.org/19/-/19-0.0.0.tgz"
+  integrity sha512-wSj2TsrEMkfKwbddPzZDaT4JREMX1YuJsxYJa/O8tuDR2hfIygUTN4eybhw+3pqp6EZsEzJTBZzdHl+Ti+mR5w==
+
 accepts@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/accepts/-/accepts-2.0.0.tgz"
@@ -112,7 +117,7 @@ chownr@^1.1.1:
   resolved "https://registry.npmjs.org/chownr/-/chownr-1.1.4.tgz"
   integrity sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==
 
-chrome-aws-lambda@^10.1.0:
+chrome-aws-lambda@10.1.0:
   version "10.1.0"
   resolved "https://registry.npmjs.org/chrome-aws-lambda/-/chrome-aws-lambda-10.1.0.tgz"
   integrity sha512-NZQVf+J4kqG4sVhRm3WNmOfzY0OtTSm+S8rg77pwePa9RCYHzhnzRs8YvNI6L9tALIW6RpmefWiPURt3vURXcw==
@@ -173,10 +178,10 @@ depd@^2.0.0, depd@~2.0.0:
   resolved "https://registry.npmjs.org/depd/-/depd-2.0.0.tgz"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
 
-devtools-protocol@0.0.901419:
-  version "0.0.901419"
-  resolved "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.901419.tgz"
-  integrity sha512-4INMPwNm9XRpBukhNbF7OB6fNTTCaI8pzy/fXg0xQzAy5h3zL1P8xT3QazgKqBrb/hAYwIBizqDBZ7GtJE74QQ==
+devtools-protocol@0.0.883894:
+  version "0.0.883894"
+  resolved "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.883894.tgz"
+  integrity sha512-33idhm54QJzf3Q7QofMgCvIVSd2o9H3kQPWaKT/fhoZh+digc+WSiMhbkeG3iN79WY4Hwr9G05NpbhEVrsOYAg==
 
 dunder-proto@^1.0.1:
   version "1.0.1"
@@ -496,6 +501,8 @@ minimist@^1.2.6:
 
 mkdirp-classic@^0.5.2:
   version "0.5.3"
+  resolved "https://registry.npmjs.org/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz"
+  integrity sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==
 
 mkdirp@^0.5.1:
   version "0.5.6"
@@ -625,13 +632,13 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-puppeteer-core@^10.1.0, puppeteer-core@^10.4.0:
-  version "10.4.0"
-  resolved "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-10.4.0.tgz"
-  integrity sha512-KU8zyb7AIOqNjLCN3wkrFXxh+EVaG+zrs2P03ATNjc3iwSxHsu5/EvZiREpQ/IJiT9xfQbDVgKcsvRuzLCxglQ==
+puppeteer-core@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-10.1.0.tgz"
+  integrity sha512-x2yDSJI/PRiWhDqAt1jd4rhTotxwjwKzHLIIqD2MlJ+TmzGJfBY9snAGIVXJwkWfKJg+Ef5xupdK0EbHDqBpFw==
   dependencies:
     debug "4.3.1"
-    devtools-protocol "0.0.901419"
+    devtools-protocol "0.0.883894"
     extract-zip "2.0.1"
     https-proxy-agent "5.0.0"
     node-fetch "2.6.1"
@@ -820,6 +827,8 @@ tar-stream@^2.0.0:
 
 tar-stream@^2.1.4:
   version "2.2.0"
+  resolved "https://registry.npmjs.org/tar-stream/-/tar-stream-2.2.0.tgz"
+  integrity sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==
   dependencies:
     bl "^4.0.3"
     end-of-stream "^1.4.1"
