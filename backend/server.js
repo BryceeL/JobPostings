@@ -1,6 +1,5 @@
 import express from "express"
 import cors from "cors"
-VITE_API_URL=https://jobpostings-mmbu.onrender.co
 import routes from "./routes"
 
 const app = express()
