@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer')
-const express = require('express')
+import express from "express"
+import puppeteer from "puppeteer"
 const router = express.Router()
 
 function randomDelay(min, max) {
@@ -20,8 +20,10 @@ router.get('/scrape_jobs', async (request, response) => {
     try {
         console.log(`Scraping '${district}'`)
         const browser = await puppeteer.launch({
-            headless: true, //false = show browser 
-            defaultViewport: null, 
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: "new"
+            // headless: true, //false = show browser 
+            // defaultViewport: null, 
         })
 
         //load page
