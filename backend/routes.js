@@ -21,6 +21,7 @@ router.get('/scrape_jobs', async (request, response) => {
     try {
         console.log(`Scraping '${district}'`)
         browser = await puppeteer.launch({
+            executablePath: puppeteer.executablePath(),
             headless: "new",
             args: [
                 "--no-sandbox",
