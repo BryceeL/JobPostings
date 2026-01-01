@@ -126,4 +126,4 @@ router.get('/scrape_jobs', async (request, response) => {
     }
 });
 
-export default routes
+export default router
