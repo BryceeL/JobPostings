@@ -8,7 +8,8 @@ app.use(cors({
   origin: "https://blitzjobpostings.netlify.app/"
 }))
 
-const port = 3001
+//Routes traffiac to render's port or local port
+const port = process.env.PORT || 3001
 
 app.use('/api', routes)
 

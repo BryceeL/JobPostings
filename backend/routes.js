@@ -12,6 +12,7 @@ router.get('/scrape_jobs', async (request, response) => {
     const rawKeywords = request.query.keywords
     const keywords = rawKeywords ? rawKeywords.split(',') : []
 
+    let browser
     let pageCount = 1
     let isLastPage = false
     let invalidDistrict = false
@@ -19,7 +20,7 @@ router.get('/scrape_jobs', async (request, response) => {
 
     try {
         console.log(`Scraping '${district}'`)
-        const browser = await puppeteer.launch({
+        browser = await puppeteer.launch({
             headless: "new",
             args: [
                 "--no-sandbox",
@@ -123,10 +124,11 @@ router.get('/scrape_jobs', async (request, response) => {
         if (!invalidDistrict) {
             console.log(`Successfully scraped page ${pageCount} of '${district}'`)
         }
-        
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ error: 'Scraping failed' })
+    } finally {
+        if (browser) await browser.close()
+    // } catch (error) {
+    //     console.error(error);
+    //     response.status(500).json({ error: 'Scraping failed' })
     }
 });
 
