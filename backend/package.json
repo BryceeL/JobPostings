@@ -11,5 +11,8 @@
   "scripts": {
     "start": "node server.js",
     "postinstall": "node node_modules/puppeteer/install.mjs"
+  },
+   "engines": {
+    "node": ">=20 <21"
   }
 }
