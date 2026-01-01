@@ -5,7 +5,7 @@ import routes from "./routes.js"
 const app = express()
 //Remove origin for development purposes
 app.use(cors({
-  origin: "https://blitzjobpostings.netlify.app/"
+  origin: "https://blitzjobpostings.netlify.app"
 }))
 
 //Routes traffiac to render's port or local port
