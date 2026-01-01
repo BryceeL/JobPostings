@@ -21,15 +21,12 @@ router.get('/scrape_jobs', async (request, response) => {
     try {
         console.log(`Scraping '${district}'`)
         browser = await puppeteer.launch({
-            executablePath: puppeteer.executablePath(),
             headless: "new",
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage"
             ]
-            // headless: true, //false = show browser 
-            // defaultViewport: null, 
         })
 
         //load page

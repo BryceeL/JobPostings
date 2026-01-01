@@ -9,8 +9,7 @@
     "puppeteer": "22.15.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "start": "npx puppeteer browsers install chrome && node server.js"
   },
    "engines": {
     "node": ">=20 <21"
