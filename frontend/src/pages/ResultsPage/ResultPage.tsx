@@ -10,7 +10,7 @@ type JobType = {
 }
 
 function ResultPage() {
-    const api = import.meta.env.API_URL
+    const api = import.meta.env.VITE_API_URL
 
     const [jobPostings, setJobPostings] = useState<JobType[]>([])
 
