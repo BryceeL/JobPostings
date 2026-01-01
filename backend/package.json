@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "postinstall": "node node_modules/puppeteer/install.mjs"
+    "postinstall": "npx puppeteer browsers install chrome"
   },
    "engines": {
     "node": ">=20 <21"
