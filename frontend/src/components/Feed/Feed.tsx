@@ -14,7 +14,7 @@ function Feed(props: feedTypes) {
     const [list, setList]: any = useState([])
     const [input, setInput]: any = useState("")
 
-    const value = JSON.parse(localStorage.getItem(keyName) || '""')
+    const value = JSON.parse(localStorage.getItem(keyName) || '[]')
 
     useEffect(() => {
         if (value != "") {
