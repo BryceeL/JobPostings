@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 import "./ResultPage.css"
 
@@ -10,14 +11,13 @@ type JobType = {
 }
 
 function ResultPage() {
-    const api = import.meta.env.VITE_API_URL
-
     const [jobPostings, setJobPostings] = useState<JobType[]>([])
-
-    const [scrapeAmount, setScrapeAmount] = useState<number>(0)
 
     const [finished, setFinished] = useState<boolean>(false)
 
+    //for visual statistic elements
+    const[scrapeTarget, setScrapeTarget] = useState<string>("")
+    const [scrapeAmount, setScrapeAmount] = useState<number>(0)
     const [failedScrapes, setFailedScrapes] = useState<string[]>([])
     const [completedScrapes, setCompletedScrapes] = useState<string[]>([])
 
@@ -74,49 +74,49 @@ function ResultPage() {
 
     
     useEffect(() => {
-        if (calledRef.current) return;
-        calledRef.current = true;
+        const runQueue = async () => {
+            if (calledRef.current) return
+            calledRef.current = true
 
-        if (districtsList.length == 0) {
-            alert("Please add some district names.")
-        } 
-        if (keywordsList.length == 0)   {
-            alert("Please add some keywords to match.")
-        } 
+            if (districtsList.length == 0) {
+                alert("Please add some district names.")
+            } 
+            if (keywordsList.length == 0)   {
+                alert("Please add some keywords to match.")
+            } 
 
-        setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
+            setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
 
-        districtsList.forEach((district: string) => {
-            fetch(`${api}/api/scrape_jobs?district=${encodeURIComponent(district)}&keywords=${encodeURIComponent(keywordsList.join(','))}`)
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error('Failed to fetch');
-                    }
-                    return res.json();
-                })
-                .then(data => {
+            for (const district of districtsList) {
+                setScrapeTarget(district)
+                try {
+                    console.log(`Start scraping from district ${district}`)
+                    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/scrape_jobs`, {
+                            district,
+                            keywordsList,
+                    })
+                    
                     //Response that it is valid
-                    if (data.invalidDistrict == true) {
+                    if (res.data.invalidDistrict == true) {
                         console.log(`Name error for '${district}'`)
                         setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Invalid Name)`])
                     } else {
-                        const jobs = data.matchingJobs
+                        const jobs = res.data.matchingJobs
                         setJobPostings(jobPostings => [...jobPostings, ...jobs])
                         setCompletedScrapes(completedScrapes => [...completedScrapes, district])
                     }
                     incrementScrapeAmount()
-                } )
-                .catch(err => {
+                } catch (error) {
+                    console.error(`Failed to scrape ${district}`, error)
                     setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Scraping Error)`])
                     incrementScrapeAmount()
-
-                    console.error(`Fetch error for '${district}'`, err)
-                    console.log("error")
-                })
-        })
-
-
-      
+                } finally {
+                    setScrapeTarget("")
+                }
+                
+            }
+        }
+        runQueue()
     }, [])
 
     //sets the text blob for the text file download
@@ -129,8 +129,16 @@ function ResultPage() {
 
     return (
         <div className='result-page'>
-            <p>Districts scraped: {scrapeAmount}/{districtsList.length}</p>
-
+            <div>
+                Status:
+                { 
+                    scrapeTarget != "" ? 
+                    ` Scraping "${scrapeTarget}"`: " Not Scraping."
+                }
+            </div>
+            <p>
+                Districts scraped: {scrapeAmount}/{districtsList.length}
+            </p>
             <div className='button-container'>
                 <button onClick={() => navigate("/")}>Back</button>
 
@@ -139,7 +147,10 @@ function ResultPage() {
                 )}
             </div>
             
-            <p>{jobPostings.length == 0 && finished ? 'No matching job posts found.': ""}</p>
+            <p>
+                {jobPostings.length == 0 && finished ? 
+                'No matching job posts found.': ""}
+            </p>
             
             <div className='scraped-jobs'>
                 { jobPostings.length > 0 ? (jobPostings.map((jobPosting : JobType) => (
