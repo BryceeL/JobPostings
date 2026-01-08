@@ -3,16 +3,30 @@ import cors from "cors"
 import routes from "./routes.js"
 
 const app = express()
-//Remove origin for development purposes
-app.use(cors({
-  origin: "https://blitzjobpostings.netlify.app"
-}))
 
-//Routes traffiac to render's port or local port
+//Routes traffic to render's port or local port
 const port = process.env.PORT || 3001
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "https://blitzjobpostings.netlify.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  }
+}))
+
+app.use(express.json())
+//api route
 app.use('/api', routes)
 
 app.listen(port, () => {
-  console.log(`Backend server running`);
+  console.log(`Backend server running at ${port}`);
 });
