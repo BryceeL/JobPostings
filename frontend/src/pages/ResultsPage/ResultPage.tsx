@@ -46,10 +46,12 @@ function ResultPage() {
     const navigate = useNavigate();
     const calledRef = useRef(false);
 
+    //Adds '0' before the hour (eg 05:00)
     function formatTime(number: number) {
         return number < 10 ? '0' + number : number;
     }
 
+    //Create and download a blob with a formated string of matched jobs
     function downloadJobPostings() {
         const blob = new Blob([blobJobs], {type: 'text/plain'})
         const url = URL.createObjectURL(blob)
@@ -87,6 +89,7 @@ function ResultPage() {
 
             setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
 
+            //iterate district list
             for (const district of districtsList) {
                 setScrapeTarget(district)
                 try {
@@ -95,23 +98,23 @@ function ResultPage() {
                             district,
                             keywordsList,
                     })
-                    
-                    //Response that it is valid
-                    if (res.data.invalidDistrict == true) {
-                        console.log(`Name error for '${district}'`)
-                        setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Invalid Name)`])
+                     const jobs = res.data.matchingJobs
+                    setJobPostings(jobPostings => [...jobPostings, ...jobs])
+                    setCompletedScrapes(completedScrapes => [...completedScrapes, district])
+                
+                } catch (error: any) {
+                    let errorMessage
+                    if (error.response) {
+                        errorMessage = error.response.data.error
                     } else {
-                        const jobs = res.data.matchingJobs
-                        setJobPostings(jobPostings => [...jobPostings, ...jobs])
-                        setCompletedScrapes(completedScrapes => [...completedScrapes, district])
+                        errorMessage = "Scraping Error"
                     }
-                    incrementScrapeAmount()
-                } catch (error) {
-                    console.error(`Failed to scrape ${district}`, error)
-                    setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Scraping Error)`])
-                    incrementScrapeAmount()
+                    console.error(`Failed to scrape '${district}'`, errorMessage)
+                    setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (${errorMessage})`])
+                    
                 } finally {
                     setScrapeTarget("")
+                    incrementScrapeAmount()
                 }
                 
             }
