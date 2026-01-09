@@ -20,6 +20,7 @@ async function scrapeDistrict(district, keywords) {
         //Parameters for Local Development
         // headless: false, //false = show browser 
         // slowMo: 50,
+        
         //Parameters for Live Deployment
         headless: "new",
         //Parameters to keep
@@ -55,7 +56,7 @@ async function scrapeDistrict(district, keywords) {
                 invalidDistrict = true
                 break
             }
-                console.log(`'${district}' page ${pageCount} is valid`)
+            console.log(`'${district}' page ${pageCount} is valid`)
 
             await page.waitForSelector('.pagination');
             //returns the class list of all the page buttons
@@ -140,10 +141,17 @@ router.post('/scrape_jobs', async (req, res) => {
     isScraping = true
     try {
         const result = await scrapeDistrict(district, keywordsList)
-        res.status(200).json(result)
+        if (result.invalidDistrict == true) {
+            res.status(400).json({ error: 'Invalid District Name' })
+        } else {
+            res.status(200).json(result)
+        }
+
+        
     } catch (error) {
+        console.error(`Scraping ${district} failed`)
         console.error(error);
-        res.status(500).json({ error: `Scraping ${district} failed` })
+        res.status(500).json({ error: 'Scraping failed' })
     } finally {
         isScraping = false
     }
