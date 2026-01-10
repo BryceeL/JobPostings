@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import FeedItem from "../Item/FeedItem";
+import FeedItem from "../FeedItem/FeedItem";
 
 import "./Feed.css"
 
@@ -23,7 +23,7 @@ function Feed(props: feedTypes) {
 
     }, []);
 
-    //update list to localstorage and clear input box
+    //update list to local storage and clear input box
     function addToList() {
         if(input.trim() == "") {
             alert("Input field cannot be empty.")
