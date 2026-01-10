@@ -18,11 +18,11 @@ async function scrapeDistrict(district, keywords) {
     console.log('Openning Browser')
     const browser = await puppeteer.launch({
         //Parameters for Local Development
-        // headless: false, //false = show browser 
-        // slowMo: 50,
+        headless: false, //false = show browser 
+        slowMo: 50,
         
         //Parameters for Live Deployment
-        headless: "new",
+        // headless: "new",
         //Parameters to keep
         args: [
             "--no-sandbox",
@@ -34,17 +34,17 @@ async function scrapeDistrict(district, keywords) {
     try {
         //load page
         const page = await browser.newPage()
-        await page.goto(`https://www.edjoin.org/${district}?rows=10&page=1`, {
+        await page.goto(`https://www.edjoin.org/${district}`, {
             waitUntil: "domcontentloaded",
         })
         console.log(`'${district}' page ${pageCount} loaded`)
         do {
             await randomDelay(500, 3000)
             await page.waitForSelector('body');
-            //checks if page does not have application error
+            //checks if page has a job container
             const validPage = await page.evaluate(() => {
-                const headingText = document.querySelector("h1").innerText
-                if (headingText.indexOf("Server Error") !== -1) {
+                const jobContainer = document.querySelector('.job-contain')
+                if (jobContainer == null) {
                     return false
                 } else {
                     return true
