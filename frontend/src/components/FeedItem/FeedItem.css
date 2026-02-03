@@ -14,3 +14,7 @@
     overflow-wrap: break-word;
     inline-size: 150px;
 }
+
+.highlight {
+    background-color: rgb(255, 247, 0);
+}
