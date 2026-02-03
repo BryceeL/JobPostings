@@ -9,13 +9,16 @@ function randomDelay(min, max) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function scrapeDistrict(district, keywords) {
+async function scrapeDistrict(district, keywords, webElementList) {
     let pageCount = 1
     let isLastPage = false
-    let invalidDistrict = false
     let matchingJobs = []
-
-    console.log('Openning Browser')
+    let softErrorData = {
+        error: false,
+        reason: ""
+    }
+ 
+    console.log(`Opening browser for '${webElementList.webDomain}/${district}'`)
     const browser = await puppeteer.launch({
         //Parameters for Local Development
         headless: false, //false = show browser 
@@ -34,13 +37,13 @@ async function scrapeDistrict(district, keywords) {
     try {
         //load page
         const page = await browser.newPage()
-        await page.goto(`https://www.edjoin.org/${district}`, {
+        await page.goto(`${webElementList.webDomain}/${district}`, {
             waitUntil: "domcontentloaded",
         })
-        console.log(`'${district}' page ${pageCount} loaded`)
         do {
-            await randomDelay(500, 3000)
             await page.waitForSelector('body');
+            console.log(`'${district}' page ${pageCount} loaded`)
+            await randomDelay(200, 2000)
             //checks if page has a job container
             const validPage = await page.evaluate(() => {
                 const jobContainer = document.querySelector('.job-contain')
@@ -53,46 +56,27 @@ async function scrapeDistrict(district, keywords) {
 
             if(!validPage) {
                 console.log(`'${district}' page ${pageCount} returned server error; stop scraping`)
-                invalidDistrict = true
-                break
+                softErrorData.error = true
+                softErrorData.reason = "Invalid Name"
+                return {matchingJobs, softErrorData}
             }
             console.log(`'${district}' page ${pageCount} is valid`)
 
-            await page.waitForSelector('.pagination');
-            //returns the class list of all the page buttons
-            const pageClasses = await page.evaluate(() => {
-                const pageList = document.querySelector(".pagination")
-                const pageButtons = pageList.querySelectorAll("li")
-
-                return Array.from(pageButtons).map((pageButton) => {
-                    const classList = pageButton.classList
-                    return {classList}
-                })
-            })
-
-            //determine if last page if there is no navigation button or the '>' button is disabled
-            if (pageClasses.length == 0 || pageClasses[pageClasses.length-1].classList[0] == 'disabled') {
-                isLastPage = true
-            } else {
-                isLastPage = false
-            }
-
-            //Scrape job titles and respective links
+            //Scrape institution's name, job titles, and respective links
             await page.waitForSelector('.job-contain')
             await page.waitForSelector('.bioBox')
-            const jobPostings = await page.evaluate(() => {
-                const jobContainerList = document.querySelectorAll(".job-contain")
-                const bioBox = document.querySelector(".bioBox")
+            const jobPostings = await page.evaluate((webElementList) => {
+                const jobContainerList = document.querySelectorAll(`${webElementList.jobContainerName}`)
+                const bioBox = document.querySelector(`${webElementList.institutionTitleContainerName}`)
 
                 return Array.from(jobContainerList).map((jobPosting) => {
-                    const jobTitle = jobPosting.querySelector(".card-job-title").innerText
+                    const jobTitle = jobPosting.querySelector(`${webElementList.jobTitleName}`).innerText
                     const jobLink = jobPosting.querySelector("a").href
-            
-                        const districtTitle = bioBox.querySelector("h1").innerText
+                    const districtTitle = bioBox.querySelector(`${webElementList.institutionTitleElementName}`).innerText
 
                     return {jobTitle, jobLink, districtTitle}
                 })
-            })
+            }, webElementList)
 
             //Iterate job postings and push entries with titles that match a keyword
             jobPostings.forEach((jobPosting) => {
@@ -108,46 +92,61 @@ async function scrapeDistrict(district, keywords) {
 
             await randomDelay(500, 3000)
 
+            
+            //returns the class list of all the pagination buttons
+            const pageClasses = await page.evaluate(() => {
+                const pageList = document.querySelector(".pagination")
+                const pageButtons = pageList.querySelectorAll("li")
+
+                return Array.from(pageButtons).map((pageButton) => {
+                    const classList = pageButton.classList
+                    return {classList}
+                })
+            })
+
+            await page.waitForSelector('.pagination');
+            //determine if last page if there is no navigation button or the '>' button is disabled
             //Navigate to next page if not the last one
-            if(isLastPage == false) {
+            if(pageClasses.length > 0 && pageClasses[pageClasses.length-1].classList[0] != 'disabled') {
                 pageCount++
                 await Promise.all([
                         page.waitForNavigation(),
-                        page.click(`xpath=//a[@data-page="${pageCount}"]`)
+                        //find and click anchor element with "data-page" property
+                        // page.click(`xpath=//a[@data-page="${pageCount}"]`)
+                        page.click(".pagination > ul > li:last-child > a")
                 ])
+            } else {
+                isLastPage = true
             }
         } while (isLastPage == false)
 
-        if (!invalidDistrict) {
-            console.log(`Successfully scraped page ${pageCount} of '${district}'`)
-        }
-        return {matchingJobs, invalidDistrict}
+        console.log(`Successfully scraped page ${pageCount} of '${district}'`)
+        return {matchingJobs, softErrorData}
     } finally {
         await browser.close()
     }  
 }
 
 router.post('/scrape_jobs', async (req, res) => {
-    const {district, keywordsList = []} = req.body
+    const {district, keywordsList = [], webElementList} = req.body
 
     if (isScraping) {
         console.error(`Cannot scrape ${district}: scraping in progress`)
         return res.status(429).json({ error: "Scrape already in progress" })
     }
 
-    console.log("district:", district);
-    console.log("keywords:", keywordsList);
+    console.log("district:", district)
+    console.log("keywords:", keywordsList)
+    console.log("web elements:", webElementList)
 
     isScraping = true
     try {
-        const result = await scrapeDistrict(district, keywordsList)
-        if (result.invalidDistrict == true) {
-            res.status(400).json({ error: 'Invalid District Name' })
+        const result = await scrapeDistrict(district, keywordsList, webElementList)
+        if (result.softErrorData.error == true) {
+            res.status(400).json({ error: result.softErrorData.reason })
         } else {
             res.status(200).json(result)
         }
-
-        
     } catch (error) {
         console.error(`Scraping ${district} failed`)
         console.error(error);
