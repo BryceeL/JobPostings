@@ -3,35 +3,45 @@ import FeedItem from "../FeedItem/FeedItem";
 
 import "./Feed.css"
 
-type feedTypes = {
-    keyName: string,
+type FeedState<T> = {
+    stateValue: T[],
+    get: () => T[],
+    set: (v: T[]) => void
+}
+
+type placeHolderProp = {
+    feedState: FeedState<string>
     placeHolderText: string
 }
 
-function Feed(props: feedTypes) {
-    const { keyName, placeHolderText } = props
+
+function Feed({feedState, placeHolderText}: placeHolderProp) {
+    const { stateValue, get, set } = feedState
 
     const [list, setList]: any = useState([])
     const [input, setInput]: any = useState("")
 
-    const value = JSON.parse(localStorage.getItem(keyName) || '[]')
+    const LScurrentProfile = JSON.parse(localStorage.getItem("currentProfile") || '[]')
 
     useEffect(() => {
-        if (value != "") {
-            setList(value)
+        if (stateValue.length != 0) {
+            setList(stateValue)
         }
 
-    }, []);
+    }, [stateValue]);
 
     //update list to local storage and clear input box
     function addToList() {
-        if(input.trim() == "") {
+        if(LScurrentProfile == 0) {
+            alert("Create a Scrape Profile before inputting.")       
+        } else if(input.trim() == "") {
             alert("Input field cannot be empty.")
         } else if(list.includes(input)) {
             alert("This is a duplicate entry.")
         } else {
             setList([...list, input])
-            localStorage.setItem(keyName, JSON.stringify([...list, input]))
+            localStorage.setItem(keyName, JSON.stringify([input, ...list]))
+            set([input, ...list])
             setInput("")
         }
         
@@ -53,11 +63,13 @@ function Feed(props: feedTypes) {
                     type='text'
                     id='group'
                     value={input}
+                    disabled={LScurrentProfile == 0 ? true : false}
                     placeholder={placeHolderText}
                     onChange={(e) => setInput(e.target.value)}
                 />
 
-                <button onClick={() => addToList()}>Add</button>
+                <button 
+                    onClick={() => addToList()}>Add</button>
             </div>
             
             <div className="feed-container">
