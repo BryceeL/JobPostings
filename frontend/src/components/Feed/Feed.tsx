@@ -3,36 +3,29 @@ import FeedItem from "../FeedItem/FeedItem";
 
 import "./Feed.css"
 
-type FeedState<T> = {
-    stateValue: T[],
-    get: () => T[],
-    set: (v: T[]) => void
-}
-
-type placeHolderProp = {
-    feedState: FeedState<string>
+type feedTypes = {
+    keyName: string,
     placeHolderText: string
 }
 
-
-function Feed({feedState, placeHolderText}: placeHolderProp) {
-    const { stateValue, get, set } = feedState
+function Feed(props: feedTypes) {
+    const { keyName, placeHolderText } = props
 
     const [list, setList]: any = useState([])
     const [input, setInput]: any = useState("")
 
-    const LScurrentProfile = JSON.parse(localStorage.getItem("currentProfile") || '[]')
+    const value = JSON.parse(localStorage.getItem(keyName) || '[]')
 
     useEffect(() => {
-        if (stateValue.length != 0) {
-            setList(stateValue)
+        if (value != 0) {
+            setList(value)
         }
 
-    }, [stateValue]);
+    }, []);
 
     //update list to local storage and clear input box
     function addToList() {
-        if(LScurrentProfile == 0) {
+        if(input.trim() == 0) {
             alert("Create a Scrape Profile before inputting.")       
         } else if(input.trim() == "") {
             alert("Input field cannot be empty.")
@@ -41,10 +34,8 @@ function Feed({feedState, placeHolderText}: placeHolderProp) {
         } else {
             setList([...list, input])
             localStorage.setItem(keyName, JSON.stringify([input, ...list]))
-            set([input, ...list])
             setInput("")
         }
-        
     }
 
     //return items from the list except 'deleteItem'
@@ -63,7 +54,6 @@ function Feed({feedState, placeHolderText}: placeHolderProp) {
                     type='text'
                     id='group'
                     value={input}
-                    disabled={LScurrentProfile == 0 ? true : false}
                     placeholder={placeHolderText}
                     onChange={(e) => setInput(e.target.value)}
                 />
