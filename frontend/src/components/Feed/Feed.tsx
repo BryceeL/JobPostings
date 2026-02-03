@@ -11,8 +11,8 @@ type feedTypes = {
 function Feed(props: feedTypes) {
     const { keyName, placeHolderText } = props
 
-    const [list, setList]: any = useState([])
-    const [input, setInput]: any = useState("")
+    const [list, setList] = useState<string[]>([])
+    const [input, setInput] = useState<string>("")
 
     const value = JSON.parse(localStorage.getItem(keyName) || '[]')
 
@@ -24,27 +24,44 @@ function Feed(props: feedTypes) {
     }, []);
 
     //update list to local storage and clear input box
-    function addToList() {
-        if(input.trim() == 0) {
-            alert("Create a Scrape Profile before inputting.")       
-        } else if(input.trim() == "") {
+    function addToList() {     
+        if(input.trim() == "") {
             alert("Input field cannot be empty.")
         } else if(list.includes(input)) {
             alert("This is a duplicate entry.")
         } else {
-            setList([...list, input])
+            setList([input, ...list])
             localStorage.setItem(keyName, JSON.stringify([input, ...list]))
             setInput("")
         }
     }
 
-    //return items from the list except 'deleteItem'
+    //deletes item by filtering the list without the said item
     function deleteFromList(deleteItem: string) {
         const newList: any = list.filter((item: string) => {
             return item != deleteItem
         })
         setList(newList)
         localStorage.setItem(keyName, JSON.stringify(newList))
+    }
+
+    //Change the item's index to move said item up or down the list
+    function incrementItemIndex(incrementItem: string, incrementType: string) {
+        setList(prevList => {
+            const prevItemIndex = prevList.indexOf(incrementItem)
+            const newList = prevList.filter(item => item != incrementItem)
+
+            if (incrementType == "up" && prevItemIndex != 0) {
+                newList.splice(prevItemIndex-1, 0, incrementItem)
+            } else if (incrementType == "down" && prevItemIndex != newList.length+1) {
+                newList.splice(prevItemIndex+1, 0, incrementItem)
+            } else {
+                newList.splice(prevItemIndex, 0, incrementItem)
+            }
+
+            localStorage.setItem(keyName, JSON.stringify(newList))
+            return newList
+        })
     }
 
     return (
@@ -68,6 +85,7 @@ function Feed(props: feedTypes) {
                         <FeedItem
                             item={item}
                             deleteFunction={deleteFromList}
+                            incrementIndexFunction={incrementItemIndex}
                         ></FeedItem>
                     ))}
                 </div>
