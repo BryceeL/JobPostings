@@ -21,11 +21,11 @@ async function scrapeDistrict(district, keywords, webElementList) {
     console.log(`Opening browser for '${webElementList.webDomain}/${district}'`)
     const browser = await puppeteer.launch({
         //Parameters for Local Development
-        headless: false, //false = show browser 
-        slowMo: 50,
+        // headless: true, //false = show browser 
+        // slowMo: 50,
         
         //Parameters for Live Deployment
-        // headless: "new",
+        headless: "new",
         //Parameters to keep
         args: [
             "--no-sandbox",
