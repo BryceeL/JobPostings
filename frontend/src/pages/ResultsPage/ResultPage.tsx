@@ -21,7 +21,9 @@ function ResultPage() {
     const [failedScrapes, setFailedScrapes] = useState<string[]>([])
     const [completedScrapes, setCompletedScrapes] = useState<string[]>([])
 
-    const [currentTime, setCurrentTime] = useState<String>("")
+    const [currentTime, setCurrentTime] = useState<string>("")
+
+    const [blobJobs, setBlobJobs] = useState<string>("")
 
     let scrapeCount = 0
 
@@ -37,8 +39,6 @@ function ResultPage() {
     if (hours >= 12) {
         meridiem = "PM"
     }
-
-    const [blobJobs, setBlobJobs] = useState<string>("")
 
     //Get Data from Local Storage
     const districtsList = JSON.parse(localStorage.getItem("districts") || '""')
