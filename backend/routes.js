@@ -21,11 +21,11 @@ async function scrapeDistrict(district, keywords, webElementList) {
     console.log(`Opening browser for '${webElementList.webDomain}/${district}'`)
     const browser = await puppeteer.launch({
         //Parameters for Local Development
-        // headless: true, //false = show browser 
-        // slowMo: 50,
+        headless: false, //false = show browser 
+        slowMo: 50,
         
         //Parameters for Live Deployment
-        headless: "new",
+        // headless: "new",
         //Parameters to keep
         args: [
             "--no-sandbox",
@@ -45,14 +45,14 @@ async function scrapeDistrict(district, keywords, webElementList) {
             console.log(`'${district}' page ${pageCount} loaded`)
             await randomDelay(200, 2000)
             //checks if page has a job container
-            const validPage = await page.evaluate(() => {
-                const jobContainer = document.querySelector('.job-contain')
+            const validPage = await page.evaluate((webElementList) => {
+                const jobContainer = document.querySelector(webElementList.jobContainerName)
                 if (jobContainer == null) {
                     return false
                 } else {
                     return true
                 }
-            })
+            }, webElementList)
 
             if(!validPage) {
                 console.log(`'${district}' page ${pageCount} returned server error; stop scraping`)
@@ -63,16 +63,16 @@ async function scrapeDistrict(district, keywords, webElementList) {
             console.log(`'${district}' page ${pageCount} is valid`)
 
             //Scrape institution's name, job titles, and respective links
-            await page.waitForSelector('.job-contain')
-            await page.waitForSelector('.bioBox')
+            await page.waitForSelector(webElementList.jobContainerName)
+            await page.waitForSelector(webElementList.institutionTitleContainerName)
             const jobPostings = await page.evaluate((webElementList) => {
-                const jobContainerList = document.querySelectorAll(`${webElementList.jobContainerName}`)
-                const bioBox = document.querySelector(`${webElementList.institutionTitleContainerName}`)
+                const jobContainerList = document.querySelectorAll(webElementList.jobContainerName)
+                const bioBox = document.querySelector(webElementList.institutionTitleContainerName)
 
                 return Array.from(jobContainerList).map((jobPosting) => {
-                    const jobTitle = jobPosting.querySelector(`${webElementList.jobTitleName}`).innerText
+                    const jobTitle = jobPosting.querySelector(webElementList.jobTitleName).innerText
                     const jobLink = jobPosting.querySelector("a").href
-                    const districtTitle = bioBox.querySelector(`${webElementList.institutionTitleElementName}`).innerText
+                    const districtTitle = bioBox.querySelector(webElementList.institutionTitleElementName).innerText
 
                     return {jobTitle, jobLink, districtTitle}
                 })
@@ -92,19 +92,37 @@ async function scrapeDistrict(district, keywords, webElementList) {
 
             await randomDelay(500, 3000)
 
+            //checks if there is a .pagination
+            const hasPagination = await page.evaluate((webElementList) => {
+                const pagination = document.querySelector(webElementList.pagination)
+                if (pagination == null) {
+                    return false
+                } else {
+                    return true
+                }
+            }, webElementList)
             
+            if (!hasPagination) {
+                isLastPage = true
+                continue
+            }
+
+            await page.waitForSelector(`${webElementList.pagination}`)
             //returns the class list of all the pagination buttons
-            const pageClasses = await page.evaluate(() => {
-                const pageList = document.querySelector(".pagination")
+            const pageClasses = await page.evaluate((webElementList) => {
+                const pageList = document.querySelector(webElementList.pagination)
                 const pageButtons = pageList.querySelectorAll("li")
 
-                return Array.from(pageButtons).map((pageButton) => {
-                    const classList = pageButton.classList
-                    return {classList}
-                })
-            })
+                if (pageButtons == null) {
+                    return {}
+                } else {
+                    return Array.from(pageButtons).map((pageButton) => {
+                                        const classList = pageButton.classList
+                                        return {classList}
+                    })
+                }
+            }, webElementList)
 
-            await page.waitForSelector('.pagination');
             //determine if last page if there is no navigation button or the '>' button is disabled
             //Navigate to next page if not the last one
             if(pageClasses.length > 0 && pageClasses[pageClasses.length-1].classList[0] != 'disabled') {
@@ -113,7 +131,7 @@ async function scrapeDistrict(district, keywords, webElementList) {
                         page.waitForNavigation(),
                         //find and click anchor element with "data-page" property
                         // page.click(`xpath=//a[@data-page="${pageCount}"]`)
-                        page.click(".pagination > ul > li:last-child > a")
+                        page.click(`${webElementList.pagination} > ul > li:last-child > a`)
                 ])
             } else {
                 isLastPage = true
