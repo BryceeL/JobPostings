@@ -6,6 +6,15 @@ import WebElementInput from '../../components/WebElementInput/WebElementInput';
 import "./InputPage.css"
 
 function InputPage() {
+    
+    const webElementData: Record<string, Record<string, string>> = {
+        "webDomain": {title: "Web Domain", placeHolderText:'https://www.edjoin.org'},
+        "jobContainerName": {title: "Job Container Name", placeHolderText:'.job-contain'},
+        "jobTitleName": {title: "Job Title Name", placeHolderText: '.card-job-title'},
+        "institutionTitleContainerName": {title:"Institution Title Container Name", placeHolderText: '.bioBox'},
+        "institutionTitleElementName": {title:"Institution Title Element Name", placeHolderText: 'h1'},
+        "pagination": {title:"Pagination", placeHolderText: '.pagination'}
+    }
     const navigate = useNavigate()
 
     function importScrapeProfile(file: File) {
@@ -33,68 +42,57 @@ function InputPage() {
     function exportScrapeProfile() {
         const data: Record<string, string> = {}
         const input = window.prompt("Name your exported scrape profile:");
-        
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i)
-            if (!key) continue
+        if (input !== "") {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i)
+                if (!key) continue
 
-            const value = localStorage.getItem(key)
-            if (value !== null) {
-            data[key] = value
+                const value = localStorage.getItem(key)
+                if (value !== null) {
+                data[key] = value
+                }
             }
-        }
 
-        const json = JSON.stringify(data, null, 2);
-        const blob = new Blob([json], { type: "application/json"})
-        const url = URL.createObjectURL(blob)
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: "application/json"})
+            const url = URL.createObjectURL(blob)
 
-        const a = document.createElement("a")
-        a.href = url
-        a.download = input+".json"
-        a.click()
+            const a = document.createElement("a")
+            a.href = url
+            a.download = input+".json"
+            a.click()
 
-        URL.revokeObjectURL(url)
+            URL.revokeObjectURL(url)
+            }
+        
     }
 
     return (
         <div className='input-page'>  
+            
             <div className="inputs-container">
                 <Feed
                     keyName={"districts"}
-                    placeHolderText={`Input a district's name`}
+                    placeHolderText={`Input an institution's name`}
                 ></Feed>
                 <Feed
                     keyName={"keywords"}
                     placeHolderText={`Input a keyword`}
                 ></Feed>
                 <div className='web-inputs-container'>
-                    <WebElementInput
-                        text={"Web Domain"}
-                        placeHolderText={'https://www.edjoin.org'}
-                        keyName={"webDomain"}
-                    ></WebElementInput>
-                    <WebElementInput
-                        text={"Job Container Name"}
-                        placeHolderText={'.job-contain'}
-                        keyName={"jobContainerName"}
-                    ></WebElementInput>
-                    <WebElementInput
-                        text={"Job Title Name"}
-                        placeHolderText={'.card-job-title'}
-                        keyName={"jobTitleName"}
-                    ></WebElementInput>
-                    <WebElementInput
-                        text={"Institution Title Container Name"}
-                        placeHolderText={'.bioBox'}
-                        keyName={"institutionTitleContainerName"}
-                    ></WebElementInput>
-                    <WebElementInput
-                        text={"Organization Title Element Name"}
-                        placeHolderText={'h1'}
-                        keyName={"institutionTitleElementName"}
-                    ></WebElementInput>
+                    <div className='scroll'>
+                        {
+                            Object.entries(webElementData).map(([key, value]) => (
+                                <WebElementInput
+                                    keyName={key}
+                                    title={value.title}
+                                    placeHolderText={value.placeHolderText}
+                                ></WebElementInput>
+                            ))
+                        }
+                    </div>
+                   
                 </div>
-              
             </div> 
 
             <button className='result-button' onClick={() => navigate("/results")}>Scrape Jobs Posts</button>     
