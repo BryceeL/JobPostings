@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import "./WebElementInput.css"
 
 type propDataTypes = {
-    text: string,
+    title: string,
     placeHolderText: string,
     keyName: string,
 }
 
 function WebElementInput(props: propDataTypes) {
-    const { text, placeHolderText, keyName } = props
+    const { title, placeHolderText, keyName } = props
 
     const [input, setInput]: any = useState("")
 
@@ -30,7 +30,7 @@ function WebElementInput(props: propDataTypes) {
 
     return (
         <div className='web-input'>
-            <div className='text-container'>{text}</div>
+            <div className='text-container'>{title}</div>
             <input
                 type='text'
                 id='group'
