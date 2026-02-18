@@ -43,12 +43,15 @@ function ResultPage() {
     //Get Data from Local Storage
     const districtsList = JSON.parse(localStorage.getItem("districts") || '""')
     const keywordsList = JSON.parse(localStorage.getItem("keywords") || '""')
+
+    //TODO: Code to create this table instead of manually
     const webElementList = {
         webDomain: JSON.parse(localStorage.getItem("webDomain") || '""'),
         jobContainerName: JSON.parse(localStorage.getItem("jobContainerName") || '""'),
         jobTitleName: JSON.parse(localStorage.getItem("jobTitleName") || '""'),
         institutionTitleContainerName: JSON.parse(localStorage.getItem("institutionTitleContainerName") || '""'),
-        institutionTitleElementName: JSON.parse(localStorage.getItem("institutionTitleElementName") || '""')
+        institutionTitleElementName: JSON.parse(localStorage.getItem("institutionTitleElementName") || '""'),
+        pagination: JSON.parse(localStorage.getItem("pagination") || '""')
     }
     
 
