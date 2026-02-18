@@ -21,13 +21,21 @@
 }
 
 .web-inputs-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
+    overflow: hidden;
+
+    border: solid 3px rgb(0, 0, 0);
+    border-radius: 10px;
+
+    height: 55vh;
+}
+
+.web-inputs-container .scroll {
+    overflow-x: hidden;
+    overflow-y: auto; 
 
     height: 100%;
+    width: 100%;
+
 }
 
 .result-button {
