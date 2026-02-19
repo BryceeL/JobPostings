@@ -54,9 +54,10 @@ function ResultPage() {
         pagination: JSON.parse(localStorage.getItem("pagination") || '""')
     }
     
-
     const navigate = useNavigate();
     const calledRef = useRef(false);
+
+    localStorage.setItem("active", "true")
 
     //Adds '0' before the hour (eg 05:00)
     function formatTime(number: number) {
@@ -101,8 +102,12 @@ function ResultPage() {
 
             setCurrentTime(`${year}-${month+1}-${day}_${hours%12}.${formatTime(minutes)}.${formatTime(seconds)}_${meridiem}`)
 
-            //iterate district list
+            //iterate the list of districts/instiutions
             for (const district of districtsList) {
+                console.log(localStorage.getItem("active"))
+                if (localStorage.getItem("active") == "false") {
+                    break
+                }
                 setScrapeTarget(district)
                 try {
                     console.log(`Start scraping from district ${district}`)

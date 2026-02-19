@@ -16,6 +16,7 @@ function InputPage() {
         "pagination": {title:"Pagination", placeHolderText: '.pagination'}
     }
     const navigate = useNavigate()
+    localStorage.setItem("active", "false")
 
     function importScrapeProfile(file: File) {
         const reader = new FileReader();
@@ -27,8 +28,6 @@ function InputPage() {
                 Object.entries(data).forEach(([key, value]) => {
                     localStorage.setItem(key, value)
                 })
-
-                console.log("LocalStorage restored successfully")
                 navigate(0)
             } catch (err) {
                 alert("This is an invalid json file. Please provide one that has been exported by this application.")
@@ -42,10 +41,10 @@ function InputPage() {
     function exportScrapeProfile() {
         const data: Record<string, string> = {}
         const input = window.prompt("Name your exported scrape profile:");
-        if (input !== "") {
+        if (input != null) {
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i)
-                if (!key) continue
+                if (!key || key == "active") continue
 
                 const value = localStorage.getItem(key)
                 if (value !== null) {
@@ -59,9 +58,12 @@ function InputPage() {
 
             const a = document.createElement("a")
             a.href = url
-            a.download = input+".json"
+            if (input == "") {
+                a.download = "scrape-profile.json"
+            } else {
+                a.download = input+".json"
+            }
             a.click()
-
             URL.revokeObjectURL(url)
             }
         
