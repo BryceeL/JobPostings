@@ -166,8 +166,7 @@ router.post('/scrape_jobs', async (req, res) => {
             res.status(200).json(result)
         }
     } catch (error) {
-        console.error(`Scraping ${district} failed`)
-        console.error(error);
+        console.error(`Scraping ${district} failed:\n`+error);
         res.status(500).json({ error: 'Scraping failed' })
     } finally {
         isScraping = false
