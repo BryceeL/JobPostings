@@ -55,9 +55,9 @@ async function scrapeDistrict(district, keywords, webElementList) {
             }, webElementList)
 
             if(!validPage) {
-                console.log(`'${district}' page ${pageCount} returned server error; stop scraping`)
+                console.log(`'Cannot find element with "Job Container Name" for ${district}'s page ${pageCount}`)
                 softErrorData.error = true
-                softErrorData.reason = "Invalid Name"
+                softErrorData.reason = `"${jobContainerName}" not found`
                 return {matchingJobs, softErrorData}
             }
             console.log(`'${district}' page ${pageCount} is valid`)
