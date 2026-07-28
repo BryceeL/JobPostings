@@ -106,7 +106,8 @@ function ResultPage() {
             for (const district of districtsList) {
                 console.log(localStorage.getItem("active"))
                 if (localStorage.getItem("active") == "false") {
-                    break
+                    setFailedScrapes(failedScrapes => [...failedScrapes, `${district} (Prematurely ended)`])
+                    continue
                 }
                 setScrapeTarget(district)
                 try {
@@ -136,6 +137,10 @@ function ResultPage() {
                 }
                 
             }
+
+            if (localStorage.getItem("active") == "false") {
+                alert("Your scraping has ended prematurely because you opened or refreshed the input page.")
+            }
         }
         runQueue()
     }, [])
@@ -158,7 +163,7 @@ function ResultPage() {
                 }
             </div>
             <p>
-                Districts scraped: {scrapeAmount}/{districtsList.length}
+                Scraping Progress: {scrapeAmount}/{districtsList.length}
             </p>
             <div className='button-container'>
                 <button onClick={() => navigate("/")}>Back</button>
