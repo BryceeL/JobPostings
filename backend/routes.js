@@ -9,7 +9,8 @@ function randomDelay(min, max) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function scrapeDistrict(district, keywords, webElementList) {
+async function scrapeDistrict(district, keywords, blackwords, webElementList) {
+        
     let pageCount = 1
     let isLastPage = false
     let matchingJobs = []
@@ -77,14 +78,24 @@ async function scrapeDistrict(district, keywords, webElementList) {
                     return {jobTitle, jobLink, districtTitle}
                 })
             }, webElementList)
-
-            //Iterate job postings and push entries with titles that match a keyword
+            //Iterate job postings and push job entries with matching keyword and not blackwords 
             jobPostings.forEach((jobPosting) => {
                 keywords.forEach((caseKeyword) => {
                     const jobTitle = jobPosting.jobTitle.toLowerCase()
                     const keyword = caseKeyword.toLowerCase()
+                    let blacklisted = false
+
                     if (jobTitle.indexOf(keyword) !== -1 && !matchingJobs.includes(jobPosting)) {
-                        matchingJobs.push(jobPosting)
+                        blackwords.every((caseBlackword) => {
+                            if( jobTitle.indexOf(caseBlackword) !== -1) {
+                                blacklisted = true
+                                console.log(`Blackword: ${caseBlackword}`)
+                           }
+                           return !blacklisted
+                        })
+                        if (!blacklisted) {
+                            matchingJobs.push(jobPosting)
+                        }
                     }
                 })
             })
@@ -146,7 +157,7 @@ async function scrapeDistrict(district, keywords, webElementList) {
 }
 
 router.post('/scrape_jobs', async (req, res) => {
-    const {district, keywordsList = [], webElementList} = req.body
+    const {district, keywordsList = [], blackwordsList = [], webElementList} = req.body
 
     if (isScraping) {
         console.error(`Cannot scrape ${district}: scraping in progress`)
@@ -155,11 +166,12 @@ router.post('/scrape_jobs', async (req, res) => {
 
     console.log("district:", district)
     console.log("keywords:", keywordsList)
+    console.log("blacklist keywords:", blackwordsList)
     console.log("web elements:", webElementList)
 
     isScraping = true
     try {
-        const result = await scrapeDistrict(district, keywordsList, webElementList)
+        const result = await scrapeDistrict(district, keywordsList, blackwordsList, webElementList)
         if (result.softErrorData.error == true) {
             res.status(400).json({ error: result.softErrorData.reason })
         } else {

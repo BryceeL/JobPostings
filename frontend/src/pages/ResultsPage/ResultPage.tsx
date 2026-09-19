@@ -43,6 +43,7 @@ function ResultPage() {
     //Get Data from Local Storage
     const districtsList = JSON.parse(localStorage.getItem("districts") || '""')
     const keywordsList = JSON.parse(localStorage.getItem("keywords") || '""')
+    const blackwordsList = JSON.parse(localStorage.getItem("blackwords") || '""')
 
     //TODO: Code to create this table instead of manually
     const webElementList = {
@@ -111,10 +112,11 @@ function ResultPage() {
                 }
                 setScrapeTarget(district)
                 try {
-                    console.log(`Start scraping from district ${district}`)
+                    console.log(`Start scraping from institution ${district}`)
                     const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/scrape_jobs`, {
                             district,
                             keywordsList,
+                            blackwordsList,
                             webElementList,
                     })
                      const jobs = res.data.matchingJobs

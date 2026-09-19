@@ -81,27 +81,17 @@ function InputPage() {
                     keyName={"keywords"}
                     placeHolderText={`Input a keyword`}
                 ></Feed>
-                <div className='web-inputs-container'>
-                    <div className='scroll'>
-                        {
-                            Object.entries(webElementData).map(([key, value]) => (
-                                <WebElementInput
-                                    keyName={key}
-                                    title={value.title}
-                                    placeHolderText={value.placeHolderText}
-                                ></WebElementInput>
-                            ))
-                        }
-                    </div>
-                   
-                </div>
+                <Feed
+                    keyName={"blackwords"}
+                    placeHolderText={`Input a blacklist keyword`}
+                ></Feed>
             </div> 
 
             <button className='result-button' onClick={() => navigate("/results")}>Scrape Jobs Posts</button>     
             <div className="jsonfile-container">
                 <button 
                     onClick={exportScrapeProfile}
-                >Export</button>
+                >Export Scraping Data</button>
                 <input
                     type="file"
                     accept=".txt,.json"
@@ -111,7 +101,20 @@ function InputPage() {
                     }}
                 ></input>
             </div>
-           
+
+            <div className='web-inputs-container'>
+                <div className='scroll'>
+                    {
+                        Object.entries(webElementData).map(([key, value]) => (
+                            <WebElementInput
+                                keyName={key}
+                                title={value.title}
+                                placeHolderText={value.placeHolderText}
+                            ></WebElementInput>
+                        ))
+                    }
+                </div>
+            </div>
         </div>
     )
 }
